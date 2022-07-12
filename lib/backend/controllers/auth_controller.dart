@@ -1,3 +1,4 @@
+import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:get/get.dart';
 
 import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
@@ -15,8 +16,8 @@ class AuthController extends GetxController {
   Future<void> onInit() async {
     //run every time auth state changes
     // ever(firebaseUser, handleAuthChanged);
-    ever(parseUser, handleUserChanged);
     await getParseUser();
+    ever(parseUser, handleUserChanged);
     super.onInit();
   }
 
@@ -27,13 +28,17 @@ class AuthController extends GetxController {
 
   //get the firestore user from the firestore collection
   Future<void> getParseUser() async {
-    if ((await ParseUser.currentUser()) != null) {
-      parseUser.value = await ParseUser.currentUser();
-      parseUser.refresh();
-    }
+    try {
+      if ((await ParseUser.currentUser()) != null) {
+        parseUser.value = await ParseUser.currentUser();
+        parseUser.refresh();
+      }
 
-    //print(parseUser.value);
-    update();
+      //print(parseUser.value);
+      update();
+    } catch (e) {
+      print(e);
+    }
   }
 
   //Login user Code
@@ -67,7 +72,7 @@ class AuthController extends GetxController {
       ..set("town", town)
       ..set("hasAccount", true)
       ..set("photoUrl", "")
-      ..set("role", "client")
+      ..set("role", "user")
       ..set("accountStatus", 1);
 
     try {
@@ -126,6 +131,7 @@ class AuthController extends GetxController {
 
   // Sign out
   Future<bool> signOut() async {
+    AppUtils.showLoading();
     if (await ParseUser.currentUser() != null) {
       await (await ParseUser.currentUser()).logout();
       await getParseUser();
@@ -137,6 +143,7 @@ class AuthController extends GetxController {
     }
 
     //Get.offAll(() => const Login());
+    SmartDialog.dismiss();
     return true;
   }
 
