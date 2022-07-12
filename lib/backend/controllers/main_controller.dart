@@ -93,7 +93,7 @@ class MainController extends GetxController {
       ..set("title", title)
       ..set("translation", content)
       ..set("type", type)
-      ..set("approved",true)
+      ..set("approved",false)
       ..set("author", AuthController().parseUser.value)
       ..set("image", parseFile);
 
