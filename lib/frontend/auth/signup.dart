@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import '../../backend/controllers/auth_controller.dart';
 import '../../utils/app_constants.dart';
 import '../../utils/app_utils.dart';
+import '../screens/dashboard.dart';
 import '../widgets/custom_button.dart';
 import '../widgets/custom_text_field.dart';
 import 'login.dart';
@@ -26,10 +27,10 @@ class _SignupState extends State<Signup> {
     return Scaffold(
       backgroundColor: Colors.grey[200],
       body: Container(
-        margin: EdgeInsets.only(top: 65),
+        padding: EdgeInsets.only(top: 65,left: 20,right: 20,bottom: 20),
         width: Get.size.width,
         height: Get.size.height,
-        padding: EdgeInsets.all(20),
+        //padding: EdgeInsets.all(20),
         child: SingleChildScrollView(
           child: FormBuilder(
             key: _formKey,
@@ -144,6 +145,10 @@ class _SignupState extends State<Signup> {
       var loggedIn = await AuthController.to.signup(fields["name"],
           fields["email"], fields["phone"], fields["town"], fields["password"]);
       SmartDialog.dismiss();
+       if(loggedIn){
+        Get.offUntil(GetPageRoute(page: () => const Dashboard()), (route) => false);
+        Get.to(()=>Dashboard());
+      }
     }
   }
 }
