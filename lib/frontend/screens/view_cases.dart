@@ -2,10 +2,27 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:semanasi/backend/controllers/main_controller.dart';
+import 'package:semanasi/frontend/screens/view_single_case.dart';
+import 'package:semanasi/utils/app_constants.dart';
 
-class View_cases extends StatelessWidget {
-  const View_cases({Key? key}) : super(key: key);
+class ViewCases extends StatefulWidget {
+  const ViewCases({Key? key}) : super(key: key);
 
+  @override
+  State<ViewCases> createState() => _ViewCasesState();
+}
+
+class _ViewCasesState extends State<ViewCases> {
+
+   @override
+  initState(){
+
+    super.initState();
+    Future.microtask(() async {
+      await MainController.to.fetchCases();
+    });
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -18,17 +35,17 @@ class View_cases extends StatelessWidget {
             pinned: true,
             flexibleSpace: FlexibleSpaceBar(
                 centerTitle: true,
-                title: Text("Cases ",
+                title: const Text("Cases ",
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 16.0,
                     )),
                 background: Container(
                   // height: Get.height*.35,
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                       borderRadius: BorderRadius.only(
-                    bottomLeft: Radius.circular(35),
-                    bottomRight: Radius.circular(35),
+                    bottomLeft: const Radius.circular(35),
+                    bottomRight: const Radius.circular(35),
                   )),
                   child: Image.asset(
                     "img/reportscreen.jpg",
@@ -37,73 +54,50 @@ class View_cases extends StatelessWidget {
                     colorBlendMode: BlendMode.darken,
                   ),
                 )),
+                actions: [
+                  IconButton(
+                    onPressed: () async {
+                     await MainController.to.fetchCases(); 
+                    },
+                    icon: const Icon(
+                      Icons.refresh,
+                    ),
+                  )
+                ],
           ),
         ];
       },
       body: Container(
         color: Colors.grey[100],
         child: ListView(
-          padding: EdgeInsets.all(20),
+          padding: const EdgeInsets.all(20),
           children: [
-            SizedBox(
+            const SizedBox(
               height: 7,
             ),
-            Text(
+            const Text(
               "Reported vernacular hatespeech cases",
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 3,
             ),
-            Text(
-              "32 Cases available",
-              style: TextStyle(
-                fontSize: 15,
-                color: Colors.grey[600],
+            Obx(()=>Text(
+                "${MainController.to.cases.value.keys.length} Cases available",
+                style: TextStyle(
+                  fontSize: 15,
+                  color: Colors.grey[600],
+                ),
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 16,
             ),
 
-            //list item
-            Container(
-              width: Get.width,
-              padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.all(Radius.circular(5)),
-                  color: Colors.grey[300]),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Container(
-                    width: 70,
-                    height: 70,
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(5)),
-                        image: DecorationImage(
-                            image: AssetImage("img/edcscreen.jpg"),
-                            fit: BoxFit.cover)),
-                  ),
-                  SizedBox(
-                    width: 7,
-                  ),
-                  Expanded(
-                    child: Text(
-                      "Hatespeech seen on social media in French",
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style:
-                          TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
-                    ),
-                  )
-                ],
-              ),
-            ),
-            //end of list item
+           _allCases()
           ],
         ),
       ),
@@ -172,4 +166,71 @@ class View_cases extends StatelessWidget {
       // ),
     ));
   }
+}
+
+_allCases() {
+ //list item
+   return  Obx(()=>Column(
+       children:MainController.to.cases.value.keys.map((key) {
+        var item = MainController.to.cases.value[key];
+        return  InkWell(
+          onTap: (){
+            MainController.to.selectedCase.value = item;
+            MainController.to.selectedCase.refresh();
+            Get.to(()=>const ViewSingleCase());
+          },
+          child: Container(
+                      width: Get.width,
+                      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                      margin: const EdgeInsets.only(bottom: 20),
+                      decoration: BoxDecoration(
+                          borderRadius: const BorderRadius.all(Radius.circular(5)),
+                          color: Colors.grey[300]),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Container(
+                              width: 70,
+                              height: 70,
+                              decoration: const BoxDecoration(
+                                  borderRadius: BorderRadius.all(Radius.circular(5)),
+                                  color: AppConst.mainColor
+                                  ),
+                                  child: Icon(_getTypeIcon(item.get("type")),color: Colors.white,size: 50,),
+                            ),
+                          
+                          const SizedBox(
+                            width: 7,
+                          ),
+                          Expanded(
+                            child: Text(
+                              "${item.get("title")}",
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style:
+                                  const TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+        );
+       
+       }).toList(),
+     ),
+   );
+            //end of list item
+}
+
+_getTypeIcon(type) {
+  if(type=="IMAGE") {
+    return Icons.image;
+  }
+
+  if(type=="VIDEO"){
+    return Icons.video_file;
+  }
+
+  return Icons.audio_file;
+
 }
