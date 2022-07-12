@@ -2,6 +2,8 @@ import 'dart:io';
 
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:get/get.dart';
+import 'package:intl/date_symbol_data_local.dart';
+import 'package:intl/intl.dart';
 import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
 import 'package:path/path.dart';
 import 'package:semanasi/utils/app_utils.dart';
@@ -91,7 +93,7 @@ class MainController extends GetxController {
       ..set("title", title)
       ..set("translation", content)
       ..set("type", type)
-      ..set("approved",false)
+      ..set("approved",true)
       ..set("author", AuthController().parseUser.value)
       ..set("image", parseFile);
 
@@ -113,11 +115,11 @@ class MainController extends GetxController {
       ParseResponse? response = await caseItem.save();
 
       if (response.success) {
-        var data = response.result;
-        var allRes = cases.value;
-        allRes[data.objectId] = data;
+        // var data = response.result;
+        // var allRes = cases.value;
+        // allRes[data.objectId] = data;
 
-        cases.value = allRes;
+        // cases.value = allRes;
 
         AppUtils.showSuccess("Case Saved Successfully!");
         SmartDialog.dismiss();
@@ -167,5 +169,57 @@ class MainController extends GetxController {
       AppUtils.showError("Cases Fetching Failed!");
     }
     SmartDialog.dismiss();
+  }
+
+  addComment({content}) async {
+    initializeDateFormatting();
+
+    var comment = {
+      "content": content,
+      "createdAt":DateFormat.yMd().add_Hm().format(DateTime.now()),
+      "author": {
+        "name": AuthController.to.parseUser.value?.get("name"),
+        "email": AuthController.to.parseUser.value?.emailAddress,
+        "objectId": AuthController.to.parseUser.value?.objectId
+      }
+    };
+
+    //selectedResource.value?.setAdd("comments", comment);
+
+    AppUtils.showLoading();
+    try {
+      var resource = ParseObject("Cases")
+        ..objectId = selectedCase.value?.objectId ?? ""
+        ..setAdd("comments", comment);
+      ParseResponse? response = await resource.save();
+
+      if (response.success) {
+        var apiResponse = await ParseObject('Cases')
+            .getObject(selectedCase.value?.objectId ?? "");
+        // var queryBuilder  = QueryBuilder<ParseObject>(ParseObject("Resources"))
+        //   ..whereEqualTo('objectId', selectedResource.value?.objectId ?? "");
+        //
+        // var apiResponse = await queryBuilder.query();
+        if (apiResponse.success && apiResponse.result != null) {
+          selectedCase.value = apiResponse.results?.first;
+          selectedCase.refresh();
+          var allRes = cases.value;
+          allRes[selectedCase.value?.objectId] = selectedCase.value;
+          cases.value = allRes;
+          cases.refresh();
+        }
+        AppUtils.showSuccess("Comment Saved Successfully!");
+      } else {
+        print(response.error?.message);
+        AppUtils.showError("Comment Saving Failed!");
+      }
+      SmartDialog.dismiss();
+      return true;
+    } on ParseError catch (e) {
+      // e.g, e.code == 'canceled'
+      AppUtils.showError("Comment Saving Failed!");
+    }
+    SmartDialog.dismiss();
+    return false;
   }
 }

@@ -51,8 +51,11 @@ class _ReportFormState extends State<ReportForm> {
                 Container(
                   margin: const EdgeInsets.all(10),
                   //show file name here
-                  child: Obx(()=>Text(
-                      MainController.to.image.value == "" ? "No file uploaded" : basename(MainController.to.image.value),
+                  child: Obx(
+                    () => Text(
+                      MainController.to.image.value == ""
+                          ? "No file uploaded"
+                          : basename(MainController.to.image.value),
                       textAlign: TextAlign.center,
                       style: TextStyle(fontSize: 18),
                     ),
@@ -85,7 +88,6 @@ class _ReportFormState extends State<ReportForm> {
                   ),
                   initialValue: 'IMAGE',
                   icon: Icon(Icons.category),
-
                   allowClear: false,
                   hint: const Text('Select File Type'),
                   validator: FormBuilderValidators.compose(
@@ -96,7 +98,6 @@ class _ReportFormState extends State<ReportForm> {
                             child: Text('$type'),
                           ))
                       .toList(),
-                      
                 ),
 
                 const SizedBox(
@@ -109,21 +110,35 @@ class _ReportFormState extends State<ReportForm> {
                     name: "title",
                     textInputType: TextInputType.name),
                 const SizedBox(height: 12),
+                const SizedBox(
+                  height: 16,
+                ),
                 //Description field
-                FormBuilderTextField(
-                    name: "translate",
-                    maxLines: 5,
-                    minLines: 5,
-                    decoration: InputDecoration(
-                      filled: true,
-                      prefixIcon: Icon(
-                        Icons.translate,
-                        color: Colors.grey[400],
-                        size: 20,
-                      ),
-                      fillColor: Colors.grey[200],
-                      focusColor: AppConst.mainColor.withOpacity(.8),
-                    )),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Text("Translation",
+                        style: TextStyle(fontWeight: FontWeight.bold)),
+                    const SizedBox(
+                      height: 7,
+                    ),
+                    FormBuilderTextField(
+                        name: "translation",
+                        maxLines: 5,
+                        minLines: 5,
+                        decoration: InputDecoration(
+                          filled: true,
+                          prefixIcon: Icon(
+                            Icons.translate,
+                            color: Colors.grey[400],
+                            size: 20,
+                          ),
+                          fillColor: Colors.grey[200],
+                          focusColor: AppConst.mainColor.withOpacity(.8),
+                        )),
+                  ],
+                ),
                 const SizedBox(height: 5),
 
                 const SizedBox(height: 25),
@@ -188,7 +203,8 @@ _saveResource(FormBuilderState? currentState) async {
     fileUrl = MainController.to.image.value;
   }
   await MainController.to
-      .saveCase(file: fileUrl, content: content, title: title,type:type);
-  Get.offUntil(GetPageRoute(page: () => const Cases()), (route) => Get.currentRoute=="/Dashboard");
+      .saveCase(file: fileUrl, content: content, title: title, type: type);
+  Get.offUntil(GetPageRoute(page: () => const Cases()),
+      (route) => Get.currentRoute == "/Dashboard");
   // SmartDialog.dismiss();
 }

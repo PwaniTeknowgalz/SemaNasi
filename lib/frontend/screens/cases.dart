@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:semanasi/backend/controllers/main_controller.dart';
 import 'package:semanasi/frontend/screens/report_form.dart';
 import 'package:semanasi/frontend/screens/view_cases.dart';
 import 'package:semanasi/frontend/widgets/cases_widget.dart';
@@ -64,6 +65,8 @@ class Cases extends StatelessWidget {
               iconData: Icons.mic,
               title: "Report and translate vernacular hatespeech",
               onClick: () {
+                MainController.to.selectedCase.value=null;
+                MainController.to.image.value ="";
                 Get.to(() => const ReportForm());
               },
             ),

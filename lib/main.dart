@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:get/get.dart';
 import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
+import 'package:semanasi/frontend/screens/splash_screen.dart';
 import 'backend/main_binding.dart';
 import 'frontend/auth/login.dart';
 import 'frontend/screens/dashboard.dart';
@@ -44,8 +45,8 @@ class MyApp extends StatelessWidget {
         // ),
         primarySwatch: Colors.teal,
       ),
-      //home: const SplashScreen(),
-      home: const Login(),
+      home: const SplashScreen(),
+     // home: const Login(),
       builder: (BuildContext context, Widget? child) {
         return FlutterSmartDialog(child: child);
       },
