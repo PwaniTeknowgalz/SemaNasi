@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
 import 'package:semanasi/backend/controllers/main_controller.dart';
 import 'package:semanasi/frontend/screens/view_resource.dart';
+import 'package:semanasi/utils/app_constants.dart';
 import 'package:transparent_image/transparent_image.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
@@ -58,11 +59,11 @@ class _ResourcesState extends State<Resources> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children:  [
-                  Icon(Icons.edit_note,color:Colors.grey.shade400,size: 70,),
-                  const SizedBox(height: 200,),
-                  Text("No resources found yet.",style: TextStyle(color: Colors.grey.shade400),),
-                  const SizedBox(height: 10,),
-                   Text("Check back later",style: TextStyle(color: Colors.grey.shade400),)
+                  const Icon(Icons.edit_note,color:AppConst.mainColor,size: 200,),
+                  const SizedBox(height: 50,),
+                  Text("No resources found yet",style: TextStyle(color: Colors.grey.shade400,fontSize: 24,fontWeight: FontWeight.bold),),
+                  const SizedBox(height: 20,),
+                   Text("Check back later",style: TextStyle(color: Colors.grey.shade400,fontSize: 18),)
                 ],
               ),
             ):Container(
