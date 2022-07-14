@@ -51,7 +51,21 @@ class _ResourcesState extends State<Resources> {
               ],
               //automaticallyImplyLeading: false,
             ),
-            body: Container(
+            body: MainController.to.resources.value.isEmpty?Container(
+              height: Get.height,
+              width: Get.width,
+              alignment: AlignmentDirectional.center,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children:  [
+                  Icon(Icons.edit_note,color:Colors.grey.shade400,size: 70,),
+                  const SizedBox(height: 200,),
+                  Text("No resources found yet.",style: TextStyle(color: Colors.grey.shade400),),
+                  const SizedBox(height: 10,),
+                   Text("Check back later",style: TextStyle(color: Colors.grey.shade400),)
+                ],
+              ),
+            ):Container(
               margin: const EdgeInsets.all(12),
               child: SingleChildScrollView(
                 child: Obx(()=> StaggeredGrid.count(
