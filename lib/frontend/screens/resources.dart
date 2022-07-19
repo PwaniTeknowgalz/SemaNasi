@@ -52,7 +52,8 @@ class _ResourcesState extends State<Resources> {
               ],
               //automaticallyImplyLeading: false,
             ),
-            body: MainController.to.resources.value.isEmpty?Container(
+            body: Obx(() {
+              return MainController.to.resources.value.isEmpty?Container(
               height: Get.height,
               width: Get.width,
               alignment: AlignmentDirectional.center,
@@ -130,6 +131,7 @@ class _ResourcesState extends State<Resources> {
                   ),
                 ),
               ),
-            )));
+            );
+            })));
   }
 }

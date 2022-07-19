@@ -63,6 +63,7 @@ class MainController extends GetxController {
       query = QueryBuilder<ParseObject>(reqObj);
       //   ..whereEqualTo('user', AuthController.to.parseUser.value?.objectId);
       var data = await query.find();
+      resources.clear();
       if (data.isNotEmpty) {
         //print("Not Empty");
         var resCurrent = resources.value;
